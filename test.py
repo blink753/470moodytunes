@@ -2,4 +2,11 @@
 
 import urllib
 response = urllib.urlopen("http://www.azlyrics.com/lyrics/katyperry/ifyoucanaffordme.html")
-response.read()
+text = response.read()
+
+startpos = text.find("!-- start of lyrics")
+endpos = text.find("!-- end of lyrics")
+
+lyrics = text[startpos:endpos]
+
+print(lyrics)
