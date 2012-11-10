@@ -7,9 +7,12 @@ response = urllib.urlopen("http://www.azlyrics.com/lyrics/katyperry/ifyoucanaffo
 text = response.read()
 
 startpos = text.find("!-- start of lyrics")
+startl = startpos+len("!-- start of lyrics")
 endpos = text.find("!-- end of lyrics")
 
-lyrics = text[startpos:endpos]
+lyrics = text[startl+4:endpos-3]
+lyrics = lyrics.replace('<br />','')
+lyrics = lyrics.replace('\r\n','')
 
 print(lyrics)
 
@@ -28,10 +31,12 @@ page=response.read()
 artist_start = page.rfind("<br /><br />")
 artists_middle = page.rfind('<div class="artists fl">')
 artists_end = page.find("</div>,artists_middle,len(page)")
-page_artists = text[artist_start:artists_end]
+page_artists = page[artist_start:artists_end]
 artists = page_artists[page_artists.find("a href=")+8:len(page_artists)]
-artisit_list = artists.split('<a href="')
-
+artist_list = artists.split('<a href="')
+for each_artist in artist_list:
+    
+    artist_url = each_artist[0:each_artist.find('"')]
 
 #getting songs
 """
@@ -40,10 +45,19 @@ for each artist found above
         each song surrounded by {}
     till: a:""}];
 """
-
-response = urllib.urlopen("http://www.azlyrics.com/b/blink.html")
+#pass [artist] in from getting artists ex: k/keithanderson.html
+artist = "k/keithanderson.html"
+url = "http://www.azlyrics.com/"
+url+=artist
+#response = urllib.urlopen("http://www.azlyrics.com/b/blink.html")
+response = urllib.urlopen(url)
 songpage = response.read()
 begin_songlist=songpage.find("songlist")
 end_songlist=songpage.find("var res")
-songs = songpage[begin_songlist+(text.find('{',begin_songlist)-begin_songlist)+1:end_songlist]
+#songs = songpage[begin_songlist+(text.find('{',begin_songlist)-begin_songlist)+1:end_songlist]
+songs = songpage[begin_songlist+(songpage.find('{',begin_songlist)-begin_songlist)+1:end_songlist]
 songlist=songs.split('{')
+
+for every song in songlist:
+    spot = song.find('h:"..')+len('h:"..')
+    song_url = song[spot:song.find('"',spot)]
