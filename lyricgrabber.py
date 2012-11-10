@@ -1,9 +1,11 @@
 import urllib
+import time
 
 def getartists(letter):
     #letter = 'a'
     url = "http://www.azlyrics.com/"+letter+".html"
     #response = urllib.urlopen("http://www.azlyrics.com/a.html")
+    time.sleep(random.randrange(1,3))
     response = urllib.urlopen(url)
     page=response.read()
     artist_start = page.rfind("<br /><br />")
@@ -25,6 +27,7 @@ def getsongs(artist_url):
     url = "http://www.azlyrics.com/"
     url+=artist_url
     #response = urllib.urlopen("http://www.azlyrics.com/b/blink.html")
+    time.sleep(random.randrange(1,3))
     response = urllib.urlopen(url)
     songpage = response.read()
     begin_songlist=songpage.find("songlist")
@@ -45,6 +48,7 @@ def getlyrics(song_url):
     #song_url = "/lyrics/keithanderson/adaliene.html"
     url = "http://www.azlyrics.com"+song_url
     #response = urllib.urlopen("http://www.azlyrics.com/lyrics/katyperry/ifyoucanaffordme.html")
+    time.sleep(random.randrange(5,10))
     response = urllib.urlopen(url)
     text = response.read()
     startpos = text.find("!-- start of lyrics")
@@ -53,7 +57,7 @@ def getlyrics(song_url):
     lyrics = text[startl+4:endpos-3]
     lyrics = lyrics.replace('<br />','')
     lyrics = lyrics.replace('\r\n','')
-    f = open('lyriclist.txt','a')
+    f = open('lyriclistA.txt','a')
     f.write(song_url+"\r\n")
     f.write("\r\n")
     f.write(lyrics+"\r\n")

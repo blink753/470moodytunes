@@ -2,10 +2,20 @@ import lyricgrabber
 import string
 import time
 start_time = time.time()
-f = open('lyriclist.txt','w')
+filename = "lyriclist"
+f = open('lyriclistA.txt','w')
 f.close()
 
+
+#go through just artists with the letter a 
+lyricgrabber.getartists('a')
+end_time = time.time()
+print 'done with lyric crawl after %.3f seconds'%(end_time-start_time)
+
+#go through all the letters
+"""
 for letter in string.lowercase:
     lyricgrabber.getartists(letter)
 end_time = time.time()
-print 'done with sentiment after %.3f seconds'%(end_time-start_time)
+print 'done with lyric crawl after %.3f seconds'%(end_time-start_time)
+"""
