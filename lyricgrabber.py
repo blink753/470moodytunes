@@ -14,6 +14,12 @@ def getartists(letter):
     page_artists = page[artist_start:artists_end]
     artists = page_artists[page_artists.find("a href=")+8:len(page_artists)]
     artist_list = artists.split('<a href="')
+    """
+    split artist list in half
+    split_num = len(artist_list)/2
+    part1 = artist_list[:split_num]
+    part2 = artist_list[split_num:]
+    """
     for each_artist in artist_list:
         artist_url = each_artist[0:each_artist.find('"')]
         if(artist_url.find('http:')== -1):
