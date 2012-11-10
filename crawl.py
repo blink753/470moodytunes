@@ -4,22 +4,21 @@ import json
 import re
 import os
 
-URLS = ['https://itunes.apple.com/us/rss/topsongs/limit=100/genre=20/xml',
-        'https://itunes.apple.com/us/rss/topsongs/limit=100/genre=2/xml',
-        'https://itunes.apple.com/us/rss/topsongs/limit=100/genre=22/xml',
-        'https://itunes.apple.com/us/rss/topsongs/limit=100/genre=5/xml',
-        'https://itunes.apple.com/us/rss/topsongs/limit=100/genre=6/xml',
-        'https://itunes.apple.com/us/rss/topsongs/limit=100/genre=17/xml',
-        'https://itunes.apple.com/us/rss/topsongs/limit=100/genre=50/xml',
-        'https://itunes.apple.com/us/rss/topsongs/limit=100/genre=18/xml',
-        'https://itunes.apple.com/us/rss/topsongs/limit=100/genre=8/xml',
-        'https://itunes.apple.com/us/rss/topsongs/limit=100/genre=11/xml',
-        'https://itunes.apple.com/us/rss/topsongs/limit=100/genre=12/xml',
-        'https://itunes.apple.com/us/rss/topsongs/limit=100/genre=14/xml',
-        'https://itunes.apple.com/us/rss/topsongs/limit=100/genre=15/xml',
-        'https://itunes.apple.com/us/rss/topsongs/limit=100/genre=24/xml',
-        'https://itunes.apple.com/us/rss/topsongs/limit=100/genre=21/xml',
-        'https://itunes.apple.com/us/rss/topsongs/limit=100/genre=10/xml',
+
+URLS = ['https://itunes.apple.com/us/rss/topsongs/limit=300/genre=20/xml',
+        'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=2/xml',
+        'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=22/xml',
+        'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=6/xml',
+        'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=17/xml',
+        'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=50/xml',
+        'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=18/xml',
+        'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=8/xml',
+        'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=11/xml',
+        'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=14/xml',
+        'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=15/xml',
+        'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=24/xml',
+        'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=21/xml',
+        'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=10/xml',
         ]
 
 def split(title):
