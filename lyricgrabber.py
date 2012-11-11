@@ -1,5 +1,7 @@
 import urllib
 import time
+import utils
+import string
 
 def getartists(letter):
     #letter = 'a'
@@ -50,11 +52,11 @@ def getsongs(artist_url):
             #print(song_url)
     return
     
-def getlyrics(song_url):
+def getlyrics(songs):
     #song_url = "/lyrics/keithanderson/adaliene.html"
     url = "http://www.azlyrics.com"+song_url
     #response = urllib.urlopen("http://www.azlyrics.com/lyrics/katyperry/ifyoucanaffordme.html")
-    time.sleep(random.randrange(5,10))
+    #look at utils and see how amny 200 or 400 I got
     response = urllib.urlopen(url)
     text = response.read()
     startpos = text.find("!-- start of lyrics")
@@ -63,12 +65,49 @@ def getlyrics(song_url):
     lyrics = text[startl+4:endpos-3]
     lyrics = lyrics.replace('<br />','')
     lyrics = lyrics.replace('\r\n','')
-    f = open('lyriclistA.txt','a')
+    while (lyrics.find('<i>')!=-1):
+        startstrip=lyrics.find('<i>')
+        endstrip=lyrics.find('</i>',startstrip)+4
+        lyrics = lyrics[:startstrip]+lyrics[endstrip:]
+    #output = open('lyrics.json', 'a')
+    #song = {'title': title_artist[0], 'artist': title_artist[1]}
+    #output.write(str(json.dumps(song)) + "\n")
+    
+    
+    f = open('toplyriclist.txt','a')
     f.write(song_url+"\r\n")
     f.write("\r\n")
     f.write(lyrics+"\r\n")
     f.write("\r\n")
     f.close()
     
-    return
+if __name__=="__main__":
+    start_time = time.time()
+    songs = utils.read_tweets()
+    #read in tweets from top_lyrics using utils
+    #get artist and name
+    testf = open('topsongstest.txt','w')
+    for song in songs:
+        artist = song["artist"]
+        title = song["title"]
+        #song_url = "/lyrics/keithanderson/adaliene.html"
+        #artist = artist.replace(' ','')
+        if(artist.find('(')!=-1):
+            artist=artist[:artist.find('(')-1]
+        artist = ''.join(ch for ch in artist if ch.isalnum())
+        #title = title.replace(' ','')
+        if(title.find('(')!=-1):
+            title=title[:title.find('(')-1]
+        title = ''.join(ch for ch in title if ch.isalnum())
+        artist = filter(lambda x: x in string.printable, artist)
+        title = filter(lambda x: x in string.printable, title)
+        testf.write('{"artist": '+artist+', "title": '+title+'}\n')
+        songurl = '/lyrics/'+artist+'/'+title+'.html'
+        testf.write(songurl+'\n')
+    
+    testf.close()
+    end_time = time.time()
+    print 'done with lyric grabbing after %.3f seconds'%(end_time-start_time)
+    pass
+
     
