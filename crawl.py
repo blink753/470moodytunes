@@ -14,8 +14,8 @@ import xml.etree.ElementTree as ET
 
 
 URLS = [
-    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=2/xml', 'genre': 2},
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=6/xml', 'genre': 6},
+##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=2/xml', 'genre': 2},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=6/xml', 'genre': 6},
 ##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=7/xml', 'genre': 7},
 ##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=8/xml', 'genre': 8},
 ##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=10/xml', 'genre': 10},
@@ -264,7 +264,6 @@ def crawl_lyrics(rss_feed):
                                 else:
                                     count +=1
 
-                            print "song count:%s" %count
                             if count == len(lyrics_links):
                                 print "song not found", song_dict
                                 fail_output.write(str(json.dumps(song_dict)) + "\n")
@@ -278,7 +277,7 @@ def crawl_lyrics(rss_feed):
                         artist_count +=1
                         
                 if artist_count == len(available_names):
-                    print "artist not found:%s" % (trimmed_artist_name,), song_dict
+                    print "artist not found ", song_dict
                     fail_output.write(str(json.dumps(song_dict)) + "\n")
 
 	    # Fail opening list of artists url
