@@ -14,23 +14,23 @@ import xml.etree.ElementTree as ET
 
 
 URLS = [
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=2/xml', 'genre': 2},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=2/xml', 'genre': 2},
     {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=6/xml', 'genre': 6},
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=7/xml', 'genre': 7},
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=8/xml', 'genre': 8},
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=10/xml', 'genre': 10},
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=11/xml', 'genre': 11},
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=14/xml', 'genre': 14},
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=15/xml', 'genre': 15},
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=17/xml', 'genre': 17},
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=18/xml', 'genre': 18},
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=20/xml', 'genre': 20},
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=21/xml', 'genre': 21},
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=22/xml', 'genre': 22},
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=23/xml', 'genre': 23},
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=24/xml', 'genre': 24},
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=25/xml', 'genre': 25},
-##    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=50/xml', 'genre': 50},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=7/xml', 'genre': 7},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=8/xml', 'genre': 8},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=10/xml', 'genre': 10},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=11/xml', 'genre': 11},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=14/xml', 'genre': 14},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=15/xml', 'genre': 15},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=17/xml', 'genre': 17},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=18/xml', 'genre': 18},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=20/xml', 'genre': 20},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=21/xml', 'genre': 21},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=22/xml', 'genre': 22},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=23/xml', 'genre': 23},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=24/xml', 'genre': 24},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=25/xml', 'genre': 25},
+    {'url':'https://itunes.apple.com/us/rss/topsongs/limit=300/genre=50/xml', 'genre': 50},
     ]
 
 
@@ -50,7 +50,7 @@ def split_song_title(song):
     rul = "|\([^)]*\)"
     name = ""
     # Removing extra description
-    trimmed = re.sub('\[[^]]*\]', '', song.lower())
+    trimmed = re.sub('\[[^]]*\]|\([^)]*\)', '', song.lower())
     tokens = re.split(' ', trimmed)
     for token in tokens:
         if token == '':
@@ -168,127 +168,127 @@ def crawl_lyrics(rss_feed):
 
     """
     count = 0
-    for url in rss_feed:
-        reader = open('top_songs.%s.json'%url['genre'], 'r')
-        output = open('lyrics.%s.json'%url['genre'], 'w')
-        fail_output = open('not_found.%s.json'%url['genre'], 'w')
-        count = 0
-        for line in iter(reader):
-            song_dict = ast.literal_eval(line)
-            #dropping "the" in artist name
-            trimmed_artist_name = drop_stop_word(song_dict['artist'])
-            if '&' in trimmed_artist_name:
-                trimmed_artist_name = split_multiple_artist(trimmed_artist_name)
+##    for url in rss_feed:
+    reader = open('top_songs.json', 'r')
+    output = open('lyrics.json', 'a')
+    fail_output = open('not_found.json', 'a')
+    count = 0
+    for line in iter(reader):
+        song_dict = ast.literal_eval(line)
+        #dropping "the" in artist name
+        trimmed_artist_name = drop_stop_word(song_dict['artist'])
+        if '&' in trimmed_artist_name:
+            trimmed_artist_name = split_multiple_artist(trimmed_artist_name)
 
-            if trimmed_artist_name[0].isdigit():
-                artists_url = "http://www.azlyrics.com/19.html"
-            else:
-                artists_url = "http://www.azlyrics.com/%s.html" % (trimmed_artist_name[0])
+        if trimmed_artist_name[0].isdigit():
+            artists_url = "http://www.azlyrics.com/19.html"
+        else:
+            artists_url = "http://www.azlyrics.com/%s.html" % (trimmed_artist_name[0])
 
-            page = urllib.urlopen(artists_url)
-            if page.getcode() == 200:
-                soup = BeautifulSoup(page.read())
-                divs_right = soup.find('div', attrs = {'class': 'artists fr'})
-                divs_left = soup.find('div', attrs = {'class': 'artists fl'})
-                available_names = []
-                page.close()
-                links = {}
+        page = urllib.urlopen(artists_url)
+        if page.getcode() == 200:
+            soup = BeautifulSoup(page.read())
+            divs_right = soup.find('div', attrs = {'class': 'artists fr'})
+            divs_left = soup.find('div', attrs = {'class': 'artists fl'})
+            available_names = []
+            page.close()
+            links = {}
 
-                if divs_right:
-                    link_list_right = divs_right.find_all('a')
-                    for link in link_list_right:
-                        if '\'' in link.text.lower():
-                            stripped_name = apostrophe(link.text.lower())
-                        else:
-                            stripped_name = link.text.lower()
-                        links[stripped_name] = link.get('href')
-                        available_names.append(stripped_name)
-                        
-                if divs_left:
-                    link_list_left = divs_left.find_all('a')
-                    for link in link_list_left:
-                        if '\'' in link.text.lower():
-                            stripped_name = split_multiple_artist(link.text.lower())
-                        else:
-                            stripped_name = link.text.lower()
-                            
-                        links[stripped_name] = link.get('href')
-                        available_names.append(stripped_name)
-                        
-                artist_count = 0
-                
-                for name in available_names:
-                    #print trimmed_artist_name, "==", name
-                    #print trimmed_artist_name[0], name[0], trimmed_artist_name[-1], name[len(trimmed_artist_name)-1]
-                    if (trimmed_artist_name in name) and (trimmed_artist_name[0]==name[0])\
-                       and (trimmed_artist_name[-1] == name[len(trimmed_artist_name)-1]) and ' - ' not in name:
-                        print "artist found = ", trimmed_artist_name, "--OR--", name
-                        if "http://www" in links[name]:
-                             song_list_url = links[name]
-                        else:
-                            song_list_url = "http://www.azlyrics.com/%s" % (links[name])
-                        page1 = urllib.urlopen(song_list_url)
-                        print song_list_url
-                        #jumping to artist's songs page
-                        if page1.getcode() == 200:
-                            soup = BeautifulSoup(page1.read())
-                            songs = soup.find_all('a', attrs = {'target': '_blank'})
-                            page1.close()
-                            lyrics_links = {}
-                            for song in songs:
-                                lyrics_links[song.text.lower()] = song.get('href')[2:]
-
-                            count = 0
-                            for song in lyrics_links:
-                                length = len(song)
-                                if (song in song_dict['title']) and (song[0] == song_dict['title'][0])\
-                                   and (song[length-1] == song_dict['title'][length-1])\
-                                   and ("www" not in lyrics_links[song]):
-                                    lyrics_url = "http://www.azlyrics.com"+lyrics_links[song]
-                                    print "lyrics found: ", song, "==", song_dict['title'], "==>", lyrics_url
-                                    page2 = urllib.urlopen(lyrics_url)
-                                    if page2.getcode() == 200:
-                                        lyrics = getlyrics(page2)
-                                        page2.close()
-                                        
-                                        s = {'title': song, 'lyrics': lyrics, 'artist': song_dict['artist']}
-                                        output.write(str(json.dumps(s)) + "\n")
-
-                                        print "sleeping"
-                                        time.sleep(10)
-                                        count = 0
-                                        break
-                                    else:
-                                        print "fail opening lyrics page"
-                                        url_handler(fail_output, page2, song_dict)
-                                else:
-                                    count +=1
-
-                            if count == len(lyrics_links):
-                                print "song not found", song_dict
-                                fail_output.write(str(json.dumps(song_dict)) + "\n")
-                            else:
-                                break
-                        # Fail opening an artist's list of songs url
-                        else:
-			    print "Fail opening an artist's list of songs url"
-                            url_handler(fail_output, page1, song_dict)
+            if divs_right:
+                link_list_right = divs_right.find_all('a')
+                for link in link_list_right:
+                    if '\'' in link.text.lower():
+                        stripped_name = apostrophe(link.text.lower())
                     else:
-                        artist_count +=1
+                        stripped_name = link.text.lower()
+                    links[stripped_name] = link.get('href')
+                    available_names.append(stripped_name)
+                    
+            if divs_left:
+                link_list_left = divs_left.find_all('a')
+                for link in link_list_left:
+                    if '\'' in link.text.lower():
+                        stripped_name = split_multiple_artist(link.text.lower())
+                    else:
+                        stripped_name = link.text.lower()
                         
-                if artist_count == len(available_names):
-                    print "artist not found ", song_dict
-                    fail_output.write(str(json.dumps(song_dict)) + "\n")
+                    links[stripped_name] = link.get('href')
+                    available_names.append(stripped_name)
 
-	    # Fail opening list of artists url
-            else:
-		print "Fail opening list of artists url"
-                url_handler(fail_output, page, song_dict)
+            artist_count = 0
+            
+            for name in available_names:
+                if (trimmed_artist_name in name) and (trimmed_artist_name[0]==name[0])\
+                   and (trimmed_artist_name[-1] == name[len(trimmed_artist_name)-1]) and ' - ' not in name:
+                    if "http://www" in links[name]:
+                         song_list_url = links[name]
+                    else:
+                        song_list_url = "http://www.azlyrics.com/%s" % (links[name])
+                    page1 = urllib.urlopen(song_list_url)
+                    #print song_list_url
+                    #jumping to artist's songs page
+                    if page1.getcode() == 200:
+                        #print "status 200"
+                        soup = BeautifulSoup(page1.read())
+                        songs = soup.find_all('a', attrs = {'target': '_blank'})
+                        page1.close()
+                        lyrics_links = {}
+                        for song in songs:
+                            lyrics_links[song.text.lower()] = song.get('href')[2:]
 
-	# Finish crawling a genre's lyrics
-        reader.close()
-        output.close()
-        fail_output.close()
+                        count = 0
+                        for song in lyrics_links:
+                            length = len(song)
+                            if (song in song_dict['title']) and (song[0] == song_dict['title'][0])\
+                               and (song[length-1] == song_dict['title'][length-1])\
+                               and (lyrics_links[song][0] == '/'):
+                                lyrics_url = "http://www.azlyrics.com"+lyrics_links[song]
+                                #print lyrics_links[song]
+                                print "lyrics found: ", song, "==", song_dict['title'], "==>", lyrics_url
+                                page2 = urllib.urlopen(lyrics_url)
+                                if page2.getcode() == 200:
+                                    #print "status 200"
+                                    lyrics = getlyrics(page2)
+                                    page2.close()
+                                    
+                                    s = {'title': song, 'lyrics': lyrics, 'artist': song_dict['artist']}
+                                    output.write(str(json.dumps(s)) + "\n")
+
+                                    #print "sleeping"
+                                    time.sleep(10)
+                                    count = 0
+                                    break
+                                else:
+                                    print "fail opening lyrics page"
+                                    url_handler(fail_output, page2, song_dict)
+                            else:
+                                count +=1
+
+                        if count == len(lyrics_links):
+                            #print "song not found", song_dict
+                            fail_output.write(str(json.dumps(song_dict)) + "\n")
+                        else:
+                            break
+                    # Fail opening an artist's list of songs url
+                    else:
+                        #print "Fail opening an artist's list of songs url"
+                        url_handler(fail_output, page1, song_dict)
+                else:
+                    artist_count +=1
+                    
+            if artist_count == len(available_names):
+                #print "artist not found ", song_dict
+                fail_output.write(str(json.dumps(song_dict)) + "\n")
+
+        # Fail opening list of artists url
+        else:
+            #print "Fail opening list of artists url"
+            url_handler(fail_output, page, song_dict)
+
+    # Finish crawling a genre's lyrics
+    reader.close()
+    output.close()
+    fail_output.close()
 
 
 if __name__=="__main__":
