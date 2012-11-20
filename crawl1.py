@@ -70,7 +70,7 @@ def crawl_lyrics():
         url = "http://api.chartlyrics.com/apiv1.asmx/SearchLyric?artist=%s&song=%s" % (song_dict['artist'], song_dict['title'],)
         page = urllib.urlopen(url)
         if page.getcode() == 200:
-            print "processing url"
+            #print "processing url"
             dom = minidom.parseString(page.read())
             root = ET.fromstring(dom.toprettyxml().encode('utf-8'))
             page.close()
@@ -90,21 +90,12 @@ def crawl_lyrics():
                         root = ET.fromstring(dom.toprettyxml().encode('utf-8'))
                         page.close()
                         lyrics = root[-1].text
-##                        if lyrics == None or "instrumental" in lyrics.lower():
-##                            song = {'title': song_dict['title'], 'lyrics': "", 'artist': song_dict['artist']}
-##                            fail_output.write(str(json.dumps(song)) + "\n")
-##                        else:
-##                            if song_dict['title'] in root[3].text.lower() and song_dict['artist'] == root[4].text.lower():
-##                                print child[5].text, "=", child[6].text
-                        print "found lyric", lyricID, checksum
+                        #print "found lyric", lyricID, checksum
                         song = {'title': song_dict['title'], 'lyrics': lyrics, 'artist': song_dict['artist']}
                         output.write(str(json.dumps(song)) + "\n")
                         lyric_found = True
                         break
-##                            else:
-##                                song = {'title': song_dict['title'], 'lyrics': "", 'artist': song_dict['artist']}
-##                                fail_output.write(str(json.dumps(song)) + "\n")
-##                                break
+
                     else:
                         count+=1
                         print "status code not 200: ", page.getcode()
@@ -124,7 +115,7 @@ def crawl_lyrics():
             song = {'title': song_dict['title'], 'lyrics': "", 'artist': song_dict['artist'], 'status': page.getcode()}
             fail_output.write(str(json.dumps(song)) + "\n")
             
-        print "sleeping"
+        #print "sleeping"
         time.sleep(60)
 
     output.close()
