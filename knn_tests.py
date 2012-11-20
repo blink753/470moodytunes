@@ -2,27 +2,26 @@
 # script to test the knn algorithm
 
 import unittest
+import knn
 
 TRAINING_SET = {
-    "happy": [
-        {"artist":"Beach Boys", "song" = "Good Vibrations", "lyrics":"good vibrations (Good vibrations, oom)"},
-        {"artist":"Aly & AJ", "song" = "Walking On Sunshine", "lyrics":"good walking sunshine walking sunshine"},
-    ],
-    "sad": [
-        {"artist":"The Beatles", "song":"Yesterday", "lyrics":"long for yesterday Yesterday"},
-        {"artist":"Billie Holiday", "song":"Gloomy Sunday", "lyrics":"yesterday Gloomy Sunday yesterday"}
-    ]
+    "happy": [{"artist":"Beach Boys", "title": "Good Vibrations", "lyrics":"good vibrations (Good vibrations, oom)"},
+              {"artist":"Aly & AJ", "title": "Walking On Sunshine", "lyrics":"good walking sunshine walking sunshine"},
+              ],
+    "sad": [{"artist":"The Beatles", "title":"Yesterday", "lyrics":"long for yesterday Yesterday"},
+            {"artist":"Billie Holiday", "title":"Gloomy Sunday", "lyrics":"yesterday Gloomy Sunday yesterday"}
+            ]
 }
 
 EVAL_SET = [
-    {"artist":"Anh Pham", "song":"Good Song", "lyrics":"good long"},
-    {"artist":"Zach Pollack", "song":"Sad Song", "lyrics":"yesterday oom crazy"},
+    {"artist":"Anh Pham", "title":"Good Song", "lyrics":"good long"},
+    {"artist":"Zach Pollack", "title":"Sad Song", "lyrics":"yesterday oom crazy"},
 ]
 
 class TestKNN(unittest.TestCase):
     def setUp(self):
         self.MoodyTunes = knn.MoodyTunes()
-        self.MoodyTunes.training(iter(EVAL_SET), iter(TRAINING_SET))
+        self.MoodyTunes.training(EVAL_SET, TRAINING_SET)
         self.MoodyTunes.knn()
 
     def test_tf_idfs(self):
@@ -40,7 +39,7 @@ class TestKNN(unittest.TestCase):
         for term,tf_idf in walk_sun_tfidf.iteritems():
             self.assertAlmostEqual(tf_idf, test_dict[term],4)
             
-        yesterday_tfidf = {"yesterday":0.5774, "for":0.5774, "walk":0.5774}
+        yesterday_tfidf = {"yesterday":0.5774, "for":0.5774, "long":0.5774}
         test_dict = self.MoodyTunes.training_set["sad"][0]["tfidf"]
         self.assertTrue(test_dict.viewkeys(), yesterday_tfidf.viewkeys())
         for term,tf_idf in yesterday_tfidf.iteritems():
