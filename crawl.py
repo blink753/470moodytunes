@@ -292,5 +292,5 @@ def crawl_lyrics(rss_feed):
 
 
 if __name__=="__main__":
-    #crawl_song(URLS)
+    crawl_song(URLS)
     crawl_lyrics(URLS)
