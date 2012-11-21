@@ -63,8 +63,8 @@ def crawl_lyrics():
     """
 
     reader = open('not_found.json', 'r')
-    output = open('new_lyrics1.json', 'a')
-    fail_output = open('leftover3.json', 'a')
+    output = open('new_lyrics.json', 'a')
+    fail_output = open('leftover.json', 'a')
     for line in iter(reader):
         song_dict = ast.literal_eval(line)
         url = "http://api.chartlyrics.com/apiv1.asmx/SearchLyric?artist=%s&song=%s" % (song_dict['artist'], song_dict['title'],)
