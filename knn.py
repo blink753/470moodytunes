@@ -129,8 +129,23 @@ class MoodyTunes(object):
 
 if __name__=="__main__":
     moodytunes = MoodyTunes()
-    moodytunes.knn()
     
+    TRAINING_SET = {
+    "happy": [{"artist":"Beach Boys", "title": "Good Vibrations", "lyrics":"good vibrations (Good vibrations, oom)"},
+              {"artist":"Aly & AJ", "title": "Walking On Sunshine", "lyrics":"good walking sunshine walking sunshine"},
+              ],
+    "sad": [{"artist":"The Beatles", "title":"Yesterday", "lyrics":"long for yesterday Yesterday"},
+            {"artist":"Billie Holiday", "title":"Gloomy Sunday", "lyrics":"yesterday Gloomy Sunday yesterday"}
+            ]
+}
+
+    EVAL_SET = [
+    {"artist":"Anh Pham", "title":"Good Song", "lyrics":"good long"},
+    {"artist":"Zach Pollack", "title":"Sad Song", "lyrics":"yesterday oom crazy"},
+]
+    
+    moodytunes.training(EVAL_SET, TRAINING_SET)
+    moodytunes.knn()
     #grabbing code here
     print "Supported moods: Happy, Sad, Energetic, Angry, Calm"
 
@@ -161,7 +176,7 @@ if __name__=="__main__":
     counts = defaultdict(int)
     for token in tokens:
         counts[token]+=1
-    query_tf = defaultdict()
+    query_tf = defaultdict(float)
     for token,count in counts.iteritems():
         query_tf[token] = moodytunes._term_tf_idf(token,count)
     
@@ -178,16 +193,19 @@ if __name__=="__main__":
     #cosine = sum([song['tfidf'][term]*train_song['tfidf'].get(term,0) for term in song['tfidf'].keys()])
     moodlist=[]
     for song in moodytunes.song_list:
-        if (song['mood']==mood):
+        #print max(song['mood'].iteritems(), key=operator.itemgetter(1))[0]
+        if (max(song['mood'].iteritems(), key=operator.itemgetter(1))[0]==mood):
             moodlist.append(song)
     moodcosinelist = []
-    print moodytunes.song_list
     for song in moodlist:
         cosine = sum([song['tfidf'][term]*query_tf[term] for term in song['tfidf'].keys()])
         moodcosinelist.append({'song':song['title'], 'cosine':cosine})
     neighbors = sorted(moodcosinelist, key=lambda k: k['cosine'])[:10]
-    # if(neighbors==[]):
-        # print moodlist[:10]
-    # else:
-        # print neighbors
+    if(neighbors==[]):
+        if (moodlist !=[]):
+            print moodlist[:10]
+        else:
+            print "No songs matched your mood, you are unique!"
+    else:
+        print neighbors
         
