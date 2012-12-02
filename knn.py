@@ -101,7 +101,10 @@ class MoodyTunes(object):
         returns: tf-idf of a token
         """
         if count > 0:
-            return (1+math.log(count,2))*self.idf[token]
+            if (self.idf[token]==[]):
+                return 0
+            else:
+                return (1+math.log(count,2))*self.idf[token]
         else:
             return 0
         
@@ -125,4 +128,66 @@ class MoodyTunes(object):
                 song['mood'] = song_mood
 
 if __name__=="__main__":
-    knn()
+    moodytunes = MoodyTunes()
+    moodytunes.knn()
+    
+    #grabbing code here
+    print "Supported moods: Happy, Sad, Energetic, Angry, Calm"
+
+    while True:
+        mood = raw_input("What is your mood? \r\n")
+        mood = mood.lower()
+        if mood == "happy":
+            break
+        if mood == "sad":
+            break
+        if mood == "energetic":
+            break
+        if mood == "angry":
+            break
+        if mood == "calm":
+            break
+        if mood == "exit":
+            sys.exit()
+            
+        print "Please input a valid mood: Happy, Sad, Energetic, Angry, Calm"
+    query = raw_input("What other words would describe your mood? \r\n")
+    print "\nYour mood is: ",mood
+    print "Other words that describe your mood: ",query,"\r\n"
+
+    
+    
+    tokens = tokenize(query)
+    counts = defaultdict(int)
+    for token in tokens:
+        counts[token]+=1
+    query_tf = defaultdict()
+    for token,count in counts.iteritems():
+        query_tf[token] = moodytunes._term_tf_idf(token,count)
+    
+    #mag
+    mag = lambda x : math.sqrt(sum(i**2 for i in x))
+    
+    m = mag(query_tf.values())
+    for token,count in query_tf.iteritems():
+        if (m != 0):
+            query_tf[token] = count/m
+        else:
+            query_tf[token]=0
+    
+    #cosine = sum([song['tfidf'][term]*train_song['tfidf'].get(term,0) for term in song['tfidf'].keys()])
+    moodlist=[]
+    for song in moodytunes.song_list:
+        if (song['mood']==mood):
+            moodlist.append(song)
+    moodcosinelist = []
+    print moodytunes.song_list
+    for song in moodlist:
+        cosine = sum([song['tfidf'][term]*query_tf[term] for term in song['tfidf'].keys()])
+        moodcosinelist.append({'song':song['title'], 'cosine':cosine})
+    neighbors = sorted(moodcosinelist, key=lambda k: k['cosine'])[:10]
+    # if(neighbors==[]):
+        # print moodlist[:10]
+    # else:
+        # print neighbors
+        
