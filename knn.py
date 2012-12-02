@@ -1,8 +1,10 @@
 import math
 import operator
 import re
+import utils
 from collections import defaultdict
 from stemming import porter2
+import sys
 
 k = 5
 
@@ -130,20 +132,11 @@ class MoodyTunes(object):
 if __name__=="__main__":
     moodytunes = MoodyTunes()
     
-    TRAINING_SET = {
-    "happy": [{"artist":"Beach Boys", "title": "Good Vibrations", "lyrics":"good vibrations (Good vibrations, oom)"},
-              {"artist":"Aly & AJ", "title": "Walking On Sunshine", "lyrics":"good walking sunshine walking sunshine"},
-              ],
-    "sad": [{"artist":"The Beatles", "title":"Yesterday", "lyrics":"long for yesterday Yesterday"},
-            {"artist":"Billie Holiday", "title":"Gloomy Sunday", "lyrics":"yesterday Gloomy Sunday yesterday"}
-            ]
-}
-
-    EVAL_SET = [
-    {"artist":"Anh Pham", "title":"Good Song", "lyrics":"good long"},
-    {"artist":"Zach Pollack", "title":"Sad Song", "lyrics":"yesterday oom crazy"},
-]
-    
+    print sys.argv[1]
+    print sys.argv[2]
+    TRAINING_SET = utils.read_songs(sys.argv[1])
+    EVAL_SET = utils.read_songs(sys.argv[2])
+    #print TRAINING_SET
     moodytunes.training(EVAL_SET, TRAINING_SET)
     moodytunes.knn()
     #grabbing code here
