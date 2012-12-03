@@ -1,3 +1,4 @@
+import ast
 import math
 import operator
 import re
@@ -5,9 +6,20 @@ import utils
 from collections import defaultdict
 from stemming import porter2
 import sys
+import utils
+import time
 
 k = 5
 
+def process_song(method,label):
+    print 'starting %s'%label
+    TRAINING_SET = utils.read_tweets(sys.argv[1])
+    EVAL_SET = utils.read_tweets(sys.argv[2])
+    start_time = time.time()
+    method(EVAL_SET, TRAINING_SET)
+    end_time = time.time()
+    print 'done with %s after %.3f seconds'%(label,end_time-start_time)
+    
 def tokenize(text):
     """
     Take a string and split it into tokens on word boundaries.
@@ -46,16 +58,16 @@ class MoodyTunes(object):
         tokenized_lyrics = defaultdict(list)
         
         # Creating inverted index
-        for mood in training_set:
-            N += len(training_set[mood])
-            for song in training_set[mood]:
-                s = {'mood': mood, 'artist': song['artist'], 'title': song['title']}
-                self.training_set[mood].append(s)
-                tokens = tokenize(song['lyrics'])
-                tokenized_lyrics[song['title']] = tokens
-                for token in set(tokens):
-                    self.inverted[token].append(song['title'])
-        
+        for song in training_set:
+            N += 1
+            #song = ast.literal_eval(song)
+            s = {'mood': song['mood'], 'artist': song['artist'], 'title': song['title']}
+            self.training_set[song['mood']].append(s)
+            tokens = tokenize(song['lyrics'])
+            tokenized_lyrics[song['title']] = tokens
+            for token in set(tokens):
+                self.inverted[token].append(song['title'])
+
         # Calculating idf for each word and tf-idf for each song in training set
         for term in self.inverted:
             self.idf[term] = math.log(float(N)/len(self.inverted[term]),2)
@@ -65,7 +77,7 @@ class MoodyTunes(object):
                     self.training_tf_idf[song][term] = self._term_tf_idf(term,count)
                     
         # Normalizing tf-idf vectors in training set
-        for mood in training_set:
+        for mood in self.training_set:
             for song in self.training_set[mood]:
                 m = mag(self.training_tf_idf[song['title']].values())
                 s = {}
@@ -73,7 +85,7 @@ class MoodyTunes(object):
                     self.training_tf_idf[song['title']][term] = self.training_tf_idf[song['title']][term]/float(m)
                     s[term] = self.training_tf_idf[song['title']][term]
                 song['tfidf'] = s
-
+                
         # Calculating tf-idf for each song in eval set based on training set
         for song in eval_list:
             s = {'title': song['title'], 'artist': song['artist']}
@@ -131,14 +143,16 @@ class MoodyTunes(object):
 
 if __name__=="__main__":
     moodytunes = MoodyTunes()
-    
-    print sys.argv[1]
-    print sys.argv[2]
-    TRAINING_SET = utils.read_songs(sys.argv[1])
-    EVAL_SET = utils.read_songs(sys.argv[2])
-    #print TRAINING_SET
-    moodytunes.training(EVAL_SET, TRAINING_SET)
+    process_song(moodytunes.training, 'training')
+##    print len(moodytunes.training_set)
+##    print len(moodytunes.song_list)
+    print 'starting knn'
+    start_time = time.time()
     moodytunes.knn()
+    end_time = time.time()
+    print 'done with %s after %.3f seconds'%("knn",end_time-start_time)
+##    print len(moodytunes.song_list)
+##    print moodytunes.song_list[-1]
     #grabbing code here
     print "Supported moods: Happy, Sad, Energetic, Angry, Calm"
 
@@ -192,7 +206,7 @@ if __name__=="__main__":
     moodcosinelist = []
     for song in moodlist:
         cosine = sum([song['tfidf'][term]*query_tf[term] for term in song['tfidf'].keys()])
-        moodcosinelist.append({'song':song['title'], 'cosine':cosine})
+        moodcosinelist.append({'song':song['title'], 'cosine':cosine, 'artist': song['artist']})
     neighbors = sorted(moodcosinelist, key=lambda k: k['cosine'])[:10]
     if(neighbors==[]):
         if (moodlist !=[]):

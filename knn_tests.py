@@ -4,29 +4,26 @@
 import unittest
 import knn
 
-TRAINING_SET = {
-    "happy": [{"artist":"Beach Boys", "title": "Good Vibrations", "lyrics":"good vibrations (Good vibrations, oom)"},
-              {"artist":"Aly & AJ", "title": "Walking On Sunshine", "lyrics":"good walking sunshine walking sunshine"},
-              ],
-    "sad": [{"artist":"The Beatles", "title":"Yesterday", "lyrics":"long for yesterday Yesterday"},
-            {"artist":"Billie Holiday", "title":"Gloomy Sunday", "lyrics":"yesterday Gloomy Sunday yesterday"}
-            ]
-}
+TRAINING_SET = [
+    {"artist":"Beach Boys", "title": "Good Vibrations", "lyrics":"good vibrations (Good vibrations, oom)", "mood": "happy"},
+    {"artist":"Aly & AJ", "title": "Walking On Sunshine", "lyrics":"good walking sunshine walking sunshine", "mood": "happy"},
+    {"artist":"The Beatles", "title":"Yesterday", "lyrics":"long for yesterday Yesterday", "mood":"sad"},
+    {"artist":"Billie Holiday", "title":"Gloomy Sunday", "lyrics":"yesterday Gloomy Sunday yesterday", "mood":"sad"},
+    ]
 
 EVAL_SET = [
     {"artist":"Anh Pham", "title":"Good Song", "lyrics":"good long"},
     {"artist":"Zach Pollack", "title":"Sad Song", "lyrics":"yesterday oom crazy"},
-]
+    ]
 
 class TestKNN(unittest.TestCase):
     def setUp(self):
         self.MoodyTunes = knn.MoodyTunes()
-        self.MoodyTunes.training(EVAL_SET, TRAINING_SET)
+        self.MoodyTunes.training(iter(EVAL_SET), iter(TRAINING_SET))
         self.MoodyTunes.knn()
 
     def test_tf_idfs(self):
         test_dict = {}
-        
         good_vibrat_tfidf = {"good":0.4082, "vibrat":0.8165, "oom":0.4082}
         test_dict = self.MoodyTunes.training_set["happy"][0]["tfidf"]
         self.assertTrue(test_dict.viewkeys(), good_vibrat_tfidf.viewkeys())
