@@ -230,14 +230,15 @@ if __name__=="__main__":
             print "Recommended Songs:"
             max_len = 0
             for song in neighbors:
-                if(len(song['song'])>max_len):
-                    max_len = len(song['song'])
+                if(len("Song: "+song['song'])>max_len):
+                    max_len = len("Song: "+song['song'])
             for song in neighbors:
                 tabf = ""
-                slen = len(song['song'])
-                while(slen<(max_len+(max_len%8))):
+                slen = len("Song: "+song['song'])
+                while(slen<(max_len+8-(max_len%8))):
                     tabf=tabf+"\t"
                     slen = slen+8
                 print "Song: "+song['song']+tabf+"Artist: "+song['artist']
+                #print "Max Length: ",max_len+8-(max_len%8)," Song Length: ",slen
         print
         
