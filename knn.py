@@ -227,6 +227,17 @@ if __name__=="__main__":
                 print moodlist[:10]
         else:
             #print neighbors
+            print "Recommended Songs:"
+            max_len = 0
             for song in neighbors:
-                print "Song: "+song['song']+" Artist: "+song['artist']
+                if(len(song['song'])>max_len):
+                    max_len = len(song['song'])
+            for song in neighbors:
+                tabf = ""
+                slen = len(song['song'])
+                while(slen<(max_len+(max_len%8))):
+                    tabf=tabf+"\t"
+                    slen = slen+8
+                print "Song: "+song['song']+tabf+"Artist: "+song['artist']
+        print
         
