@@ -8,8 +8,9 @@ from stemming import porter2
 import sys
 import utils
 import time
+import heapq
 
-k = 5
+k_neighbors = 50
 
 def process_song(method,label):
     print 'starting %s'%label
@@ -135,11 +136,13 @@ class MoodyTunes(object):
                 for train_song in self.training_set[mood]:
                     cosine = sum([song['tfidf'][term]*train_song['tfidf'].get(term,0) for term in song['tfidf'].keys()])
                     cosine_list.append({'mood':train_song['mood'], 'cosine':cosine})
-                neighbors = sorted(cosine_list, key=lambda k: k['cosine'])[:k]
-                for cosine_song in cosine_list:
-                    mood_count[cosine_song['mood']] = mood_count[cosine_song['mood']] + 1
-                song_mood = max(mood_count, mood_count.get)
-                song['mood'] = song_mood
+                #neighbors = sorted(cosine_list, key=lambda k: k['cosine'])[:k_neighbors]
+            neighbors = heapq.nlargest(k_neighbors, cosine_list, key=operator.itemgetter('cosine'))
+            for cosine_song in neighbors:
+                mood_count[cosine_song['mood']] = mood_count[cosine_song['mood']] + 1
+            song_mood = max(mood_count, key=mood_count.get)
+            song['mood'] = song_mood
+            #print song['mood']
 
 if __name__=="__main__":
     moodytunes = MoodyTunes()
@@ -154,65 +157,76 @@ if __name__=="__main__":
 ##    print len(moodytunes.song_list)
 ##    print moodytunes.song_list[-1]
     #grabbing code here
-    print "Supported moods: Happy, Sad, Energetic, Angry, Calm"
-
     while True:
-        mood = raw_input("What is your mood? \r\n")
-        mood = mood.lower()
-        if mood == "happy":
-            break
-        if mood == "sad":
-            break
-        if mood == "energetic":
-            break
-        if mood == "angry":
-            break
-        if mood == "calm":
-            break
-        if mood == "exit":
-            sys.exit()
-            
-        print "Please input a valid mood: Happy, Sad, Energetic, Angry, Calm"
-    query = raw_input("What other words would describe your mood? \r\n")
-    print "\nYour mood is: ",mood
-    print "Other words that describe your mood: ",query,"\r\n"
+        print "Supported moods: Happy, Sad, Energetic, Angry, Calm"
 
-    
-    
-    tokens = tokenize(query)
-    counts = defaultdict(int)
-    for token in tokens:
-        counts[token]+=1
-    query_tf = defaultdict(float)
-    for token,count in counts.iteritems():
-        query_tf[token] = moodytunes._term_tf_idf(token,count)
-    
-    #mag
-    mag = lambda x : math.sqrt(sum(i**2 for i in x))
-    
-    m = mag(query_tf.values())
-    for token,count in query_tf.iteritems():
-        if (m != 0):
-            query_tf[token] = count/m
+        while True:
+            mood = raw_input("What is your mood? \r\n")
+            mood = mood.lower()
+            if mood == "happy":
+                break
+            if mood == "sad":
+                break
+            if mood == "energetic":
+                break
+            if mood == "angry":
+                break
+            if mood == "calm":
+                break
+            if mood == "exit":
+                sys.exit()
+                
+            print "Please input a valid mood: Happy, Sad, Energetic, Angry, Calm"
+        query = raw_input("What other words would describe your mood? \r\n")
+        #print "\nYour mood is: ",mood
+        #print "Other words that describe your mood: ",query,"\r\n"
+        print
+        
+        
+        tokens = tokenize(query)
+        counts = defaultdict(int)
+        for token in tokens:
+            counts[token]+=1
+        query_tf = defaultdict(float)
+        for token,count in counts.iteritems():
+            query_tf[token] = moodytunes._term_tf_idf(token,count)
+        
+        #mag
+        mag = lambda x : math.sqrt(sum(i**2 for i in x))
+        
+        m = mag(query_tf.values())
+        #print "m"
+        #print m
+        for token,count in query_tf.iteritems():
+            if (m != 0):
+                query_tf[token] = count/m
+            else:
+                query_tf[token]=0
+        #print query_tf
+        #cosine = sum([song['tfidf'][term]*train_song['tfidf'].get(term,0) for term in song['tfidf'].keys()])
+        moodlist=[]
+        for song in moodytunes.song_list:
+            #print max(song['mood'].iteritems(), key=operator.itemgetter(1))[0]
+            #print song['mood']
+            if (song['mood']==mood):
+                moodlist.append(song)
+        #print moodlist
+        moodcosinelist = []
+        for song in moodlist:
+            cosine = sum([query_tf[term]*song['tfidf'].get(term,0) for term in query_tf.keys()])
+            #cosine = sum([song['tfidf'][term]*query_tf[term] for term in song['tfidf'].keys()])
+            moodcosinelist.append({'song':song['title'], 'cosine':cosine, 'artist': song['artist']})
+        #print moodcosinelist
+        neighbors = heapq.nlargest(10, moodcosinelist, key=operator.itemgetter('cosine'))
+        if(neighbors==[]):
+            if (moodlist !=[]):
+                print moodlist[:10]
+            else:
+                
+                print "No songs matched your mood, you are unique!\r\n"
+                print moodlist[:10]
         else:
-            query_tf[token]=0
-    
-    #cosine = sum([song['tfidf'][term]*train_song['tfidf'].get(term,0) for term in song['tfidf'].keys()])
-    moodlist=[]
-    for song in moodytunes.song_list:
-        #print max(song['mood'].iteritems(), key=operator.itemgetter(1))[0]
-        if (max(song['mood'].iteritems(), key=operator.itemgetter(1))[0]==mood):
-            moodlist.append(song)
-    moodcosinelist = []
-    for song in moodlist:
-        cosine = sum([song['tfidf'][term]*query_tf[term] for term in song['tfidf'].keys()])
-        moodcosinelist.append({'song':song['title'], 'cosine':cosine, 'artist': song['artist']})
-    neighbors = sorted(moodcosinelist, key=lambda k: k['cosine'])[:10]
-    if(neighbors==[]):
-        if (moodlist !=[]):
-            print moodlist[:10]
-        else:
-            print "No songs matched your mood, you are unique!"
-    else:
-        print neighbors
+            #print neighbors
+            for song in neighbors:
+                print "Song: "+song['song']+" Artist: "+song['artist']
         
