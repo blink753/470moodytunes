@@ -13,7 +13,7 @@ import heapq
 k_neighbors = 50
 
 def process_song(method,label):
-    print 'starting %s'%label
+    print 'process_song starting %s'%label
     TRAINING_SET = utils.read_tweets(sys.argv[1])
     EVAL_SET = utils.read_tweets(sys.argv[2])
     start_time = time.time()
@@ -143,102 +143,129 @@ class MoodyTunes(object):
             song_mood = max(mood_count, key=mood_count.get)
             song['mood'] = song_mood
             #print song['mood']
-
-if __name__=="__main__":
-    moodytunes = MoodyTunes()
-    process_song(moodytunes.training, 'training')
-##    print len(moodytunes.training_set)
-##    print len(moodytunes.song_list)
-    print 'starting knn'
-    start_time = time.time()
-    moodytunes.knn()
-    end_time = time.time()
-    print 'done with %s after %.3f seconds'%("knn",end_time-start_time)
-##    print len(moodytunes.song_list)
-##    print moodytunes.song_list[-1]
-    #grabbing code here
-    while True:
-        print "Supported moods: Happy, Sad, Energetic, Angry, Calm"
-
-        while True:
-            mood = raw_input("What is your mood? \r\n")
-            mood = mood.lower()
-            if mood == "happy":
-                break
-            if mood == "sad":
-                break
-            if mood == "energetic":
-                break
-            if mood == "angry":
-                break
-            if mood == "calm":
-                break
-            if mood == "exit":
-                sys.exit()
-                
-            print "Please input a valid mood: Happy, Sad, Energetic, Angry, Calm"
-        query = raw_input("What other words would describe your mood? \r\n")
-        #print "\nYour mood is: ",mood
-        #print "Other words that describe your mood: ",query,"\r\n"
-        print
-        
-        
+            
+    def search_results(self, mood, query):
         tokens = tokenize(query)
         counts = defaultdict(int)
         for token in tokens:
             counts[token]+=1
         query_tf = defaultdict(float)
         for token,count in counts.iteritems():
-            query_tf[token] = moodytunes._term_tf_idf(token,count)
-        
-        #mag
+            query_tf[token] = self._term_tf_idf(token,count)        
+        # magnitude
         mag = lambda x : math.sqrt(sum(i**2 for i in x))
-        
         m = mag(query_tf.values())
-        #print "m"
-        #print m
+
         for token,count in query_tf.iteritems():
             if (m != 0):
                 query_tf[token] = count/m
             else:
                 query_tf[token]=0
-        #print query_tf
-        #cosine = sum([song['tfidf'][term]*train_song['tfidf'].get(term,0) for term in song['tfidf'].keys()])
         moodlist=[]
-        for song in moodytunes.song_list:
-            #print max(song['mood'].iteritems(), key=operator.itemgetter(1))[0]
-            #print song['mood']
+        for song in self.song_list:
             if (song['mood']==mood):
                 moodlist.append(song)
-        #print moodlist
         moodcosinelist = []
         for song in moodlist:
             cosine = sum([query_tf[term]*song['tfidf'].get(term,0) for term in query_tf.keys()])
-            #cosine = sum([song['tfidf'][term]*query_tf[term] for term in song['tfidf'].keys()])
             moodcosinelist.append({'song':song['title'], 'cosine':cosine, 'artist': song['artist']})
-        #print moodcosinelist
         neighbors = heapq.nlargest(10, moodcosinelist, key=operator.itemgetter('cosine'))
         if(neighbors==[]):
-            if (moodlist !=[]):
-                print moodlist[:10]
-            else:
+            neighbors = moodlist[:10]
+        return neighbors
+
+#if __name__=="__main__":
+    # moodytunes = MoodyTunes()
+    # process_song(moodytunes.training, 'training')
+    # print 'starting knn'
+    # start_time = time.time()
+    # moodytunes.knn()
+    # end_time = time.time()
+    # print 'done with %s after %.3f seconds\n'%("knn",end_time-start_time)
+
+    # #grabbing code here
+    # while True:
+        # print "Supported moods: Happy, Sad, Energetic, Angry, Calm"
+
+        # while True:
+            # mood = raw_input("What is your mood? \r\n")
+            # mood = mood.lower()
+            # if mood == "happy":
+                # break
+            # if mood == "sad":
+                # break
+            # if mood == "energetic":
+                # break
+            # if mood == "angry":
+                # break
+            # if mood == "calm":
+                # break
+            # if mood == "exit":
+                # sys.exit()
                 
-                print "No songs matched your mood, you are unique!\r\n"
-                print moodlist[:10]
-        else:
-            #print neighbors
-            print "Recommended Songs:"
-            max_len = 0
-            for song in neighbors:
-                if(len("Song: "+song['song'])>max_len):
-                    max_len = len("Song: "+song['song'])
-            for song in neighbors:
-                tabf = ""
-                slen = len("Song: "+song['song'])
-                while(slen<(max_len+8-(max_len%8))):
-                    tabf=tabf+"\t"
-                    slen = slen+8
-                print "Song: "+song['song']+tabf+"Artist: "+song['artist']
-                #print "Max Length: ",max_len+8-(max_len%8)," Song Length: ",slen
-        print
+            # print "Please input a valid mood: Happy, Sad, Energetic, Angry, Calm"
+        # query = raw_input("What other words would describe your mood? \r\n")
+        # #print "\nYour mood is: ",mood
+        # #print "Other words that describe your mood: ",query,"\r\n"
+        # print
+        
+        
+        # tokens = tokenize(query)
+        # counts = defaultdict(int)
+        # for token in tokens:
+            # counts[token]+=1
+        # query_tf = defaultdict(float)
+        # for token,count in counts.iteritems():
+            # query_tf[token] = moodytunes._term_tf_idf(token,count)
+        
+        # #mag
+        # mag = lambda x : math.sqrt(sum(i**2 for i in x))
+        
+        # m = mag(query_tf.values())
+        # #print "m"
+        # #print m
+        # for token,count in query_tf.iteritems():
+            # if (m != 0):
+                # query_tf[token] = count/m
+            # else:
+                # query_tf[token]=0
+        # #print query_tf
+        # #cosine = sum([song['tfidf'][term]*train_song['tfidf'].get(term,0) for term in song['tfidf'].keys()])
+        # moodlist=[]
+        # for song in moodytunes.song_list:
+            # #print max(song['mood'].iteritems(), key=operator.itemgetter(1))[0]
+            # #print song['mood']
+            # if (song['mood']==mood):
+                # moodlist.append(song)
+        # #print moodlist
+        # moodcosinelist = []
+        # for song in moodlist:
+            # cosine = sum([query_tf[term]*song['tfidf'].get(term,0) for term in query_tf.keys()])
+            # #cosine = sum([song['tfidf'][term]*query_tf[term] for term in song['tfidf'].keys()])
+            # moodcosinelist.append({'song':song['title'], 'cosine':cosine, 'artist': song['artist']})
+        # #print moodcosinelist
+        # neighbors = heapq.nlargest(10, moodcosinelist, key=operator.itemgetter('cosine'))
+        # if(neighbors==[]):
+            # if (moodlist !=[]):
+                # print moodlist[:10]
+            # else:
+                
+                # print "No songs matched your mood, you are unique!\r\n"
+                # print moodlist[:10]
+        # else:
+            # #print neighbors
+            # print "Recommended Songs:"
+            # max_len = 0
+            # for song in neighbors:
+                # if(len("Song: "+song['song'])>max_len):
+                    # max_len = len("Song: "+song['song'])
+            # for song in neighbors:
+                # tabf = ""
+                # slen = len("Song: "+song['song'])
+                # while(slen<(max_len+8-(max_len%8))):
+                    # tabf=tabf+"\t"
+                    # slen = slen+8
+                # print "Song: "+song['song']+tabf+"Artist: "+song['artist']
+                # #print "Max Length: ",max_len+8-(max_len%8)," Song Length: ",slen
+        # print
         
