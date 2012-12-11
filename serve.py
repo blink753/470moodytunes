@@ -11,20 +11,16 @@ import utils
 
 _searcher = None
 
-@bottle.route('/search')
+@bottle.route('/search', method = ['GET', 'POST'])
 def search(name='World'):
     global _searcher
+
     query = bottle.request.query.q
-    
-    mood = bottle.request.environ.get('mood_dropbox')
-    que = bottle.request.environ.get('query')
-    print "MOOD!!!!!!"
-    print mood
-    print "QUERY!!!"
-    print que
+    mood = bottle.request.query.mood
+
     
     start_time = time.time()
-    tweets = _searcher.search_results('happy', query)
+    tweets = _searcher.search_results(mood, query)
     end_time = time.time()
 
     return dict(
