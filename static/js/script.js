@@ -8,14 +8,15 @@ var alert_template = _.template($('#alert_template').html());
 
 $('#tweetsearch form').submit(function(ev) {
     var q = $(this).find('input[name=query]').val();
-    ajax_search(q);
+	var mood= $(this).find('select[name=mood_dropbox]').val();
+    ajax_search(q,mood);
     return false;
 });
 
 
-function ajax_search(q) {
+function ajax_search(q,mood) {
   $.ajax('/search',{
-      data:{q:q},
+      data:{q:q,mood:mood},
       timeout:15000,
       success: function(data) {
         var result_div = $('#tweetsearch .results');

@@ -35,13 +35,13 @@
       <div class="row">
         <div id="tweetsearch" class="span12">
           <h2>Find songs based on your mood!</h2>
-          <form class="well form-inline">
+          <form class="well form-inline" name="box" method="post">
 			<select name="mood_dropbox">
-				<option name="happy" id="happy" value="happy"> happy </option>
-				<option name="sad" id="sad" value="sad"> sad </option>
-				<option name="angry" id="angry" value="angry"> angry </option>
-				<option name="energetic" id="energetic" value="energetic"> energetic </option>
-				<option name="calm" id="calm" value="calm"> calm </option>
+				<option value="happy"> happy </option>
+				<option value="sad"> sad </option>
+				<option value="angry"> angry </option>
+				<option value="energetic"> energetic </option>
+				<option value="calm"> calm </option>
 			</select>
             <input name="query" type="text" class="input-xlarge" placeholder="search">
             <button type="submit" class="btn">Search</button>
