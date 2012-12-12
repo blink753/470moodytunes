@@ -20,12 +20,23 @@
 	 -->
 
 	<script src="/static/js/libs/modernizr-2.5.3.min.js"></script>
+	<style>
+	body
+	{
+	background-image:url("/static/img/background.png");
+	background-repeat:no-repeat;
+	background-attachment:fixed;
+	background-position:bottom right;
+	background-color:#000000;
+	background-size:60%;
+	}
+	</style>
 </head>
 <body>
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="brand" href="#">MoodyTunes</a>
+          <a class="brand" href="#" style="color:#66CCFF;">MoodyTunes</a>
         </div>
       </div>
     </div>
@@ -34,7 +45,7 @@
 
       <div class="row">
         <div id="tweetsearch" class="span12">
-          <h2>Find songs based on your mood!</h2>
+          <h2 style="color:#66CCFF;">Find songs based on your mood!</h2>
           <form class="well form-inline" name="box" method="post">
 			<select name="mood_dropbox">
 				<option value="happy"> happy </option>
@@ -63,14 +74,14 @@
 <script id="tweet_template" type="text/template">
   <div class="tweet">
     <div class="user_info">
-      <p>Song: <%- song %>, Artist: <%- artist %></p>
+	  <img class="music_note" src="/static/img/music_note.png" width="12" height="16" />
+      <p style="text-indent: 0.5em;"> Song: <%- song %>, Artist: <%- artist %></p>
     </div>
   </div>
 </script>
 
 <script id="result_template" type="text/template">
   <p class="result_message">
-    Found <%- count %> songs in <%- time.toFixed(3) %> seconds.
   </p>
 </script>
 

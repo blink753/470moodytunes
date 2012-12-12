@@ -9,6 +9,7 @@ import sys
 import utils
 import time
 import heapq
+import string
 
 k_neighbors = 50
 
@@ -168,7 +169,7 @@ class MoodyTunes(object):
         moodcosinelist = []
         for song in moodlist:
             cosine = sum([query_tf[term]*song['tfidf'].get(term,0) for term in query_tf.keys()])
-            moodcosinelist.append({'song':song['title'], 'cosine':cosine, 'artist': song['artist']})
+            moodcosinelist.append({'song':string.capwords(song['title']), 'cosine':cosine, 'artist': string.capwords(song['artist'])})
         neighbors = heapq.nlargest(10, moodcosinelist, key=operator.itemgetter('cosine'))
         if(neighbors==[]):
             neighbors = moodlist[:10]
