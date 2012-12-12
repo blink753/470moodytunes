@@ -1,0 +1,13 @@
+Hello, we are Moody Tunes
+
+The goal of our project is to match your mood to a set of songs that would be relevant to you.
+
+There are other sites out there that try to accomplish this but what makes our application more relevant is that we will return songs that are recognizable to the user.  
+
+We accomplished this by using the top 300 songs from 14 genres from iTunes.
+
+To get the lyrics we had to crawl azlyrics and we only got kicked out twice! :)
+
+We are using a k nearest neighbor approach and tf-idf to match songs to moods using text analysis. Determing moods and emotions based solely on lyrics is actually an ongoing reserach topic.
+
+We have 5 generic moods to choose from as well as a description box to further define how they feel.  Very rarely do we feel just "happy" it is usually a combination of feelings like happy, loving, and  remenisant.
